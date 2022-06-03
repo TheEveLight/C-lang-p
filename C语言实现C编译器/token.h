@@ -28,4 +28,3 @@ private:
 
 void set_line(char* line);
 void 得到下一词法单元(词法单元类* token);
-

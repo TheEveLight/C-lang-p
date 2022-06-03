@@ -1,5 +1,4 @@
 #pragma once
-
 #include"head.h"
 using namespace std;
 //unordered_map<词法单元种类, string> 符号表;
@@ -122,6 +121,7 @@ void 得到下一词法单元(词法单元类* 词法单元)
 				exit(1);
 			}
 		}
+
 		else if ('A' <= 当前字符 <= 'z')
 		{
 			词法分析器状态 = 词法分析器状态::字母状态;
@@ -162,6 +162,7 @@ void 分析字符串(string 一行字符串)
 	{
 		得到下一词法单元(&token);
 		if (token.种类 == 词法单元种类::字符串结束符)
+
 		{
 			break;
 		}
