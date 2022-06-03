@@ -4,176 +4,176 @@
 #include "The_symbol_table.h"
 #include"head.h"
 using namespace std;
-unordered_map<TokenKind, string> Token_map;
-pair<TokenKind, string> token_pair;
-static string st_line;
-static int st_line_pos;
-static int line_length;
-static int string_length;
-static bool line_end_flag = 0;
-enum class LexerStatus {
-	INITIAL_STATUS,
-	NUM_STATUS,
-	IN_INT_PART_STATUS,
-	DOT_STATUS,
-	IN_FRAC_PART_STATUS,
-	WORD_STAUS,
-	ASSIGNMENT_STAUS,
-	SEPARATOR_STAUS,
+unordered_map<词法单元种类, string> 符号表;
+pair<词法单元种类, string> 符号键值对;
+static string 字符流暂存串;
+static int 暂存串字符下标;
+static int 暂存串长度;
+static int 传入字符串长度;
+static bool 暂存串结束标志 = 0;
+enum class 词法分析器状态 {
+	初态,
+	纯整数状态,
+	整数部分状态,
+	小数点状态,
+	浮点部分状态,
+	字母状态,
+	赋值符状态,
+	分隔符状态,
 };
-class Token;
-void get_token(Token* token)
+class 词法单元类;
+void 得到下一词法单元(词法单元类* 词法单元)
 {
-	int out_pos = 0;
-	LexerStatus status = LexerStatus::INITIAL_STATUS;
-	char current_char;
-	char next_char;
-	token->kind = TokenKind::BAD_TOKEN;
-	token->str.erase(0);
-	token->value = NULL;
-	while (string_length <= line_length + 1)
+	int 已输出字符数 = 0;
+	词法分析器状态 词法分析器状态 = 词法分析器状态::初态;
+	char 当前字符;
+	char 下一字符;
+	词法单元->种类 = 词法单元种类::错误类型;
+	词法单元->字符串.erase(0);
+	词法单元->值 = NULL;
+	while (传入字符串长度 <= 暂存串长度 + 1)
 	{
-		string_length++;
-		current_char = st_line[st_line_pos];
-		if (st_line_pos + 1 <= line_length)
+		传入字符串长度++;
+		当前字符 = 字符流暂存串[暂存串字符下标];
+		if (暂存串字符下标 + 1 <= 暂存串长度)
 		{
-			next_char = st_line[st_line_pos + 1];
+			下一字符 = 字符流暂存串[暂存串字符下标 + 1];
 		}
-		if (status == LexerStatus::NUM_STATUS)
+		if (词法分析器状态 == 词法分析器状态::纯整数状态)
 		{
-			token->kind = TokenKind::NUMBER_TOKEN;
-			token->value = atoi(token->str.c_str());
+			词法单元->种类 = 词法单元种类::数字;
+			词法单元->值 = atoi(词法单元->字符串.c_str());
 		}
-		if ((status == LexerStatus::IN_INT_PART_STATUS || status == LexerStatus::IN_FRAC_PART_STATUS) && !isdigit(current_char) && current_char != '.' && !isdigit(current_char))
+		if ((词法分析器状态 == 词法分析器状态::整数部分状态 || 词法分析器状态 == 词法分析器状态::浮点部分状态) && !isdigit(当前字符) && 当前字符 != '.' && !isdigit(当前字符))
 		{
-			token->kind = TokenKind::NUMBER_TOKEN;
+			词法单元->种类 = 词法单元种类::数字;
 			//sscanf(token->str, "%lf", &token->value);
-			token->value = atoi(token->str.c_str());
+			词法单元->值 = atoi(词法单元->字符串.c_str());
 			return;
 		}
-		if (status == LexerStatus::WORD_STAUS)
+		if (词法分析器状态 == 词法分析器状态::字母状态)
 		{
-			if (next_char == '\0' && ('A' << current_char && current_char << 'z'))
+			if (下一字符 == '\0' && ('A' << 当前字符 && 当前字符 << 'z'))
 			{
-				token->kind = TokenKind::WORD_OPERATOR_TOKEN;
+				词法单元->种类 = 词法单元种类::字母;
 				//sscanf(token->str, "%(MAX_TOKEN_SIZE-1)s", &token->value);
-				token->value = atoi(token->str.c_str());
+				词法单元->值 = atoi(词法单元->字符串.c_str());
 				return;
 			}
 		}
-		if (status == LexerStatus::SEPARATOR_STAUS)
+		if (词法分析器状态 == 词法分析器状态::分隔符状态)
 		{
-			token->kind = TokenKind::SEPARATOR_TOKEN;
+			词法单元->种类 = 词法单元种类::分隔符;
 			//sscanf(token->str, "%s", &token->value);
-			token->value = atoi(token->str.c_str());
+			词法单元->值 = atoi(词法单元->字符串.c_str());
 			return;
 		}
-		if (isspace(current_char)) {
+		if (isspace(当前字符)) {
 
-			st_line_pos++;
+			暂存串字符下标++;
 			continue;
 		}
-		if (out_pos >= MAX_TOKEN_SIZE - 1) {
+		if (已输出字符数 >= 最大符号长度 - 1) {
 			fprintf(stderr, "token too long.\n");
 			exit(1);
 		}
-		token->str.push_back(st_line[st_line_pos]);
-		st_line_pos++;
-		out_pos++;
+		词法单元->字符串.push_back(字符流暂存串[暂存串字符下标]);
+		暂存串字符下标++;
+		//out_pos++;
 		//token->str[out_pos] = '\0';
-		if (current_char == '+')
+		if (当前字符 == '+')
 		{
-			token->kind = TokenKind::ADD_OPERATOR_TOKEN;
+			词法单元->种类 = 词法单元种类::加号;
 			return;
 		}
-		else if (current_char == '-')
+		else if (当前字符 == '-')
 		{
-			token->kind = TokenKind::SUB_OPERATOR_TOKEN;
+			词法单元->种类 = 词法单元种类::减号;
 			return;
 		}
-		else if (current_char == '*')
+		else if (当前字符 == '*')
 		{
-			token->kind = TokenKind::MUL_OPERATOR_TOKEN;
+			词法单元->种类 = 词法单元种类::乘号;
 			return;
 		}
-		else if (current_char == '/')
+		else if (当前字符 == '/')
 		{
-			token->kind = TokenKind::DIV_OPERATOR_TOKEN;
+			词法单元->种类 = 词法单元种类::除号;
 			return;
 		}
-		else if (current_char == ';')
+		else if (当前字符 == ';')
 		{
-			status = LexerStatus::SEPARATOR_STAUS;
+			词法分析器状态 = 词法分析器状态::分隔符状态;
 		}
-		else if (isdigit(current_char))
+		else if (isdigit(当前字符))
 		{
-			if (status == LexerStatus::INITIAL_STATUS)
+			if (词法分析器状态 == 词法分析器状态::初态)
 			{
-				status = LexerStatus::IN_INT_PART_STATUS;
+				词法分析器状态 = 词法分析器状态::整数部分状态;
 			}
-			else if (status == LexerStatus::DOT_STATUS)
+			else if (词法分析器状态 == 词法分析器状态::小数点状态)
 			{
-				status = LexerStatus::IN_FRAC_PART_STATUS;
+				词法分析器状态 = 词法分析器状态::浮点部分状态;
 			}
 		}
-		else if (current_char == '.')
+		else if (当前字符 == '.')
 		{
-			if (status == LexerStatus::IN_INT_PART_STATUS)
-				status = LexerStatus::DOT_STATUS;
+			if (词法分析器状态 == 词法分析器状态::整数部分状态)
+				词法分析器状态 = 词法分析器状态::小数点状态;
 			else {
 				fprintf(stderr, "syntax error.\n");
 				exit(1);
 			}
 		}
-		else if ('A' <= current_char <= 'z')
+		else if ('A' <= 当前字符 <= 'z')
 		{
-			status = LexerStatus::WORD_STAUS;
+			词法分析器状态 = 词法分析器状态::字母状态;
 		}
-		else if (current_char == '=') {
-			token->kind = TokenKind::ASSIGNMENT_OPERATOR_TOKEN;
+		else if (当前字符 == '=') {
+			词法单元->种类 = 词法单元种类::等号;
 			return;
 		}
 		else {
-			fprintf(stderr, "bad character(%c)\n", current_char);
+			fprintf(stderr, "bad character(%c)\n", 当前字符);
 			exit(1);
 		}
 	}
 
-	if (string_length >= line_length)
+	if (传入字符串长度 >= 暂存串长度)
 	{
-		token->kind = TokenKind::END_OF_LINE_TOKEN;
+		词法单元->种类 = 词法单元种类::字符串结束符;
 		return;
 	}
 }
 
-void set_line(string line)
+void 初始化符号缓存串(string 行串)
 {
-	st_line = line;
-	st_line_pos = 0;
-	line_length = line.length();
-	string_length = 0;
+	字符流暂存串 = 行串;
+	暂存串字符下标 = 0;
+	暂存串长度 = 行串.length();
+	传入字符串长度 = 0;
 }
 
 
-void parse_line(string line)
+void 词法分析_字符串(string 一行字符串)
 {
-	Token token;
+	词法单元类 token;
 
-	set_line(line);
+	初始化符号缓存串(一行字符串);
 
 	for (;;)
 	{
-		get_token(&token);
-		if (token.kind == TokenKind::END_OF_LINE_TOKEN)
+		得到下一词法单元(&token);
+		if (token.种类 == 词法单元种类::字符串结束符)
 		{
 			break;
 		}
 		else
 		{
-			token_pair.first = token.kind;
-			token_pair.second = token.str;
-			Token_map.insert(token_pair);
-			std::cout << "parse:kind=" << (int)token.kind << "	vulue=" << token.str << std::endl;
+			符号键值对.first = token.种类;
+			符号键值对.second = token.字符串;
+			符号表.insert(符号键值对);
+			//std::cout << "parse:kind=" << (int)token.种类 << "	vulue=" << token.字符串 << std::endl;
 		}
 	}
 }

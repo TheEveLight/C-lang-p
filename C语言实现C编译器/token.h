@@ -1,31 +1,31 @@
 #pragma once
 #include<string>
 using namespace std;
-enum class TokenKind
+enum class 词法单元种类
 {
-	BAD_TOKEN,
-	NUMBER_TOKEN,
-	ADD_OPERATOR_TOKEN,
-	SUB_OPERATOR_TOKEN,
-	MUL_OPERATOR_TOKEN,
-	DIV_OPERATOR_TOKEN,
-	WORD_OPERATOR_TOKEN,
-	ASSIGNMENT_OPERATOR_TOKEN,
-	SEPARATOR_TOKEN,
-	END_OF_LINE_TOKEN
+	错误类型,
+	数字,
+	加号,
+	减号,
+	乘号,
+	除号,
+	字母,
+	等号,
+	分隔符,
+	字符串结束符
 };
 
-#define MAX_TOKEN_SIZE (100)
+#define 最大符号长度 (100)
 
-class Token
+class 词法单元类
 {
 public:
-	TokenKind kind;
-	string str;
-	double value;
+	词法单元种类 种类;
+	string 字符串;
+	double 值;
 private:
 };
 
 void set_line(char* line);
-void get_token(Token* token);
+void 得到下一词法单元(词法单元类* token);
 

@@ -1,21 +1,21 @@
 #pragma once
 #include "lexical_analysis.h"
 #include "The_symbol_table.h"
-//#include "file_mode.h"
+#include "file_mode.h"
 #include"head.h"
 int main(int argc, char** argv)
 {
 
-	string way = argv[1];
+	string 项目程序目录 = argv[1];
+	文件目录类 项目文件目录(项目程序目录);
 	fstream fin;
-	fin.open(way, ios::in);
-	string buf;
-	bool flag = fin.is_open();
-	if (flag)
+	fin.open(项目程序目录, ios::in);
+	string 缓存字符串;
+	if (fin.is_open())
 	{
-		while (getline(fin, buf))
+		while (getline(fin, 缓存字符串))
 		{
-			parse_line(buf);
+			词法分析_字符串(缓存字符串);
 		}
 	}
 	/*while (fgets(buf, MAX_TOKEN_SIZE, file) != NULL)
