@@ -21,10 +21,9 @@
   <ItemGroup>
     <ClInclude Include="file_mode.h" />
     <ClInclude Include="head.h" />
-    <ClInclude Include="lexical_analysis.h" />
-    <ClInclude Include="The_symbol_table.h" />
     <ClInclude Include="token.h" />
     <ClInclude Include="tree.h" />
+    <ClInclude Include="词法分析器.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />

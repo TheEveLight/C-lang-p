@@ -1,11 +1,9 @@
 #pragma once
-#define _CRT_SECURE_NO_WARNINGS
-#include "token.h"
-#include "The_symbol_table.h"
+
 #include"head.h"
 using namespace std;
-unordered_map<词法单元种类, string> 符号表;
-pair<词法单元种类, string> 符号键值对;
+//unordered_map<词法单元种类, string> 符号表;
+//pair<词法单元种类, string> 符号键值对;
 static string 字符流暂存串;
 static int 暂存串字符下标;
 static int 暂存串长度;
@@ -21,7 +19,6 @@ enum class 词法分析器状态 {
 	赋值符状态,
 	分隔符状态,
 };
-class 词法单元类;
 void 得到下一词法单元(词法单元类* 词法单元)
 {
 	int 已输出字符数 = 0;
@@ -155,7 +152,7 @@ void 初始化符号缓存串(string 行串)
 }
 
 
-void 词法分析_字符串(string 一行字符串)
+void 分析字符串(string 一行字符串)
 {
 	词法单元类 token;
 

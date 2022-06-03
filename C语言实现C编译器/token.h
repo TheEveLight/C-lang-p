@@ -1,5 +1,5 @@
 #pragma once
-#include<string>
+#include"head.h"
 using namespace std;
 enum class 词法单元种类
 {
